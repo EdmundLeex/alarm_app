@@ -3,13 +3,11 @@ class AlarmsController < ApplicationController
     @alarm = Alarm.find(params[:id])
     segment = params[:segment]
 
-    if segment
-
-    else
-      segment = Alarm.segment(Time.now)
-      
-      REDIS.sadd(segment, @alarm.id)
+    unless segment
+      segment = Alarm.segment(Time.now)  
+      REDIS.sadd(segment, @alarm.user_id)
     end
+
     user_ids = REDIS.smembers(segment).sample(10)
     users = User.where(id: user_ids)
 
@@ -21,7 +19,12 @@ class AlarmsController < ApplicationController
   end
 
   def stop
-    
+    @alarm = Alarm.find(params[:id])
+    segment = params[:segment]
+
+    if segment
+      REDIS.srem(segment, @alarm.user_id)
+    end
   end
 
   def create
