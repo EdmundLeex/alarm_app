@@ -3,8 +3,8 @@ Rails.application.routes.draw do
 
   resources :alarms, only: [:create, :update, :destroy] do
     member do
-      post 'ring'
-      post 'stop'
+      post :ring
+      post :stop
     end
   end
 end
