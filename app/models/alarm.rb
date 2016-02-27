@@ -20,6 +20,13 @@ class Alarm < ActiveRecord::Base
   validates_presence_of :alarm_time, :user_id
   validate :valid_days
 
+  def self.segment(time)
+    hh = time.hour
+    mm = time.min
+    mm = mm - (mm % 5)
+    "#{hh}#{mm}"
+  end
+
   def alarm_time_to_str
     read_attribute(:alarm_time).to_s(:time)
   end

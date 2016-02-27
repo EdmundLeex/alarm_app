@@ -42,6 +42,27 @@ RSpec.describe Alarm, type: :model do
     end
   end
 
+  describe "::segment" do
+    it "returns correct segments" do
+      time = Time.strptime("12:23", "%R")
+      expect(Alarm.segment(time)).to eq "1220"
+      time = Time.strptime("12:20", "%R")
+      expect(Alarm.segment(time)).to eq "1220"
+      time = Time.strptime("12:19", "%R")
+      expect(Alarm.segment(time)).to eq "1215"
+      time = Time.strptime("12:28", "%R")
+      expect(Alarm.segment(time)).to eq "1225"
+      time = Time.strptime("01:30", "%R")
+      expect(Alarm.segment(time)).to eq "130"
+      time = Time.strptime("00:30", "%R")
+      expect(Alarm.segment(time)).to eq "030"
+      time = Time.strptime("23:59", "%R")
+      expect(Alarm.segment(time)).to eq "2355"
+      time = Time.strptime("00:00", "%R")
+      expect(Alarm.segment(time)).to eq "00"
+    end
+  end
+
   describe "#days" do
     it "returns days in an array" do
       expect(subject.days).to be_a Array

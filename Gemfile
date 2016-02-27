@@ -27,6 +27,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'puma'
 gem 'tzinfo-data'
 gem 'devise'
+gem 'redis'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
