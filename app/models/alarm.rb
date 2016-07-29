@@ -13,12 +13,13 @@
 class Alarm < ActiveRecord::Base
   include ActiveModel::Dirty
 
-  VALID_DAYS = %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday]
+  VALID_DAYS = %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday].map(&:freeze).freeze
 
   belongs_to :user
 
+  before_validation :normalize_days
   validates_presence_of :alarm_time, :user_id
-  validate :valid_days
+  validate :valid_days, :uniq_days
 
   def self.segment(time)
     hh = time.hour
@@ -44,5 +45,10 @@ class Alarm < ActiveRecord::Base
     unless days.uniq.size == days.size
       errors.add(:days, "days must be unique")
     end
+  end
+
+  def normalize_days
+    self.days = [] if days.nil?
+    days.map!(&:capitalize)
   end
 end

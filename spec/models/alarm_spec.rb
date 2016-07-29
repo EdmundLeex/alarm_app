@@ -89,6 +89,23 @@ RSpec.describe Alarm, type: :model do
       subject.save
       expect(subject.days.size).to eq 2
     end
+
+    it "doesn't allow duplicated day" do
+      subject.days << "Sunday"
+      subject.save
+      subject.days << "Sunday"
+      expect(subject.save).to be_falsy
+    end
+
+    it "normalize days" do
+      subject.days = nil
+      subject.save
+      expect(subject.days).to be_an Array
+
+      subject.days << "sunday"
+      subject.save
+      expect(subject.days).to eq ["Sunday"]
+    end
   end
 
   describe "#alarm_time_to_str" do
