@@ -8,6 +8,7 @@
 #  user_id    :integer          not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  turned_on  :boolean          default(FALSE), not null
 #
 
 class Alarm < ActiveRecord::Base
@@ -18,7 +19,7 @@ class Alarm < ActiveRecord::Base
   belongs_to :user
 
   before_validation :normalize_days
-  validates_presence_of :alarm_time, :user_id
+  validates_presence_of :alarm_time, :user_id, :turned_on
   validate :valid_days, :uniq_days
 
   def self.segment(time)

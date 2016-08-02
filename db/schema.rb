@@ -11,17 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160214231426) do
+ActiveRecord::Schema.define(version: 20160802063952) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "alarms", force: :cascade do |t|
-    t.time     "alarm_time",              null: false
-    t.string   "days",       default: [],              array: true
-    t.integer  "user_id",                 null: false
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.time     "alarm_time",                 null: false
+    t.string   "days",       default: [],                 array: true
+    t.integer  "user_id",                    null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.boolean  "turned_on",  default: false, null: false
   end
 
   add_index "alarms", ["user_id"], name: "index_alarms_on_user_id", using: :btree

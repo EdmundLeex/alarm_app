@@ -8,12 +8,14 @@
 #  user_id    :integer          not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  turned_on  :boolean          default(FALSE), not null
 #
 
 FactoryGirl.define do
   factory :alarm do
     alarm_time "15:14"
     days %w[Monday Tuesday Friday]
+    turned_on true
     user
   end
 end

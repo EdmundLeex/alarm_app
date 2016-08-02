@@ -8,6 +8,7 @@
 #  user_id    :integer          not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  turned_on  :boolean          default(FALSE), not null
 #
 
 require 'rails_helper'
