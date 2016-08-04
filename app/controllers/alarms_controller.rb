@@ -12,6 +12,8 @@
 #
 
 class AlarmsController < ApplicationController
+  before_action :authenticate_user!
+
   def ring
     @alarm = Alarm.find(params[:id])
     segment = params[:segment]
