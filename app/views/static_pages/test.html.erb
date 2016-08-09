@@ -1,0 +1,57 @@
+<% current_user.alarms.each do |alarm| %>
+  Time: <%= alarm.alarm_time %> <br>
+  Days: <%= alarm.days %> <br>
+  On/Off: <%= alarm.turned_on? %> <br>
+
+  <button class="btn" id="ring" data-url='<%= ring_alarm_url(alarm.id) %>'>Ring</button>
+  <button class="btn" id="snooze">Snooze</button>
+  <button class="btn" id="stop">Stop</button>
+<% end %>
+
+<div id="online">
+  
+</div>
+
+<script>
+$(document).ready(function () {
+  $('#ring').on('click', function (e) {
+    e.preventDefault();
+    var url = e.currentTarget.dataset.url;
+    $.ajax({
+      url: url,
+      method: 'post'
+    }).done(function (data) {
+
+    });
+  });
+
+  function arraysEqual(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length != b.length) return false;
+
+    // If you don't care about the order of the elements inside
+    // the array, you should sort both arrays here.
+
+    for (var i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
+
+  var $onlineList = $('#online');
+  var onlineUrl = '<%= onlines_alarms_url %>';
+  var currentOnline = [];
+
+  setInterval(function () {
+    $.ajax({
+      url: onlineUrl
+    }).done(function (data) {
+      if (!arraysEqual(data.alarms.sort(), currentOnline.sort())) {
+        console.log(data.alarms);
+        currentOnline = data.alarms;
+      }
+    });
+  }, 100);
+});
+</script>

@@ -8,5 +8,9 @@ Rails.application.routes.draw do
       post :ring
       post :stop
     end
+
+    collection do
+      get :onlines
+    end
   end
 end

@@ -16,17 +16,9 @@ class AlarmsController < ApplicationController
 
   def ring
     @alarm = Alarm.find(params[:id])
-    segment = params[:segment]
+    @alarm.go_online
 
-    unless segment
-      segment = Alarm.segment(Time.now)  
-      REDIS.sadd(segment, @alarm.user_id)
-    end
-
-    user_ids = REDIS.smembers(segment).sample(10)
-    users = User.where(id: user_ids)
-
-    render json: users
+    render json: online_users
   end
 
   def snooze
@@ -57,5 +49,18 @@ class AlarmsController < ApplicationController
     @alarm = Alarm.find(params[:id])
 
 
+  end
+
+  def onlines
+    render json: { alarms: Alarm.online_ids }
+  end
+
+  private
+
+  def online_users
+    # remove this after test
+    online_alarm_ids = Alarm.online_ids
+    online_users = User.joins(:alarms)
+                       .where("alarms.id in (#{online_alarm_ids.join(',')})")
   end
 end

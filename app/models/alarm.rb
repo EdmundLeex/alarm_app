@@ -13,7 +13,9 @@
 
 class Alarm < ActiveRecord::Base
   include ActiveModel::Dirty
+  include OnlineTracker
 
+  ONLINE_MINUTE = 5
   VALID_DAYS = %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday].map(&:freeze).freeze
 
   belongs_to :user
