@@ -9,6 +9,8 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  turned_on  :boolean          default(FALSE), not null
+#  status     :string
+#  online_key :string
 #
 
 class AlarmsController < ApplicationController
@@ -16,7 +18,7 @@ class AlarmsController < ApplicationController
 
   def ring
     @alarm = Alarm.find(params[:id])
-    @alarm.go_online
+    @alarm.ring
 
     render json: online_users
   end

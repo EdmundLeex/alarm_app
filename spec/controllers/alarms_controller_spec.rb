@@ -9,6 +9,8 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  turned_on  :boolean          default(FALSE), not null
+#  status     :string
+#  online_key :string
 #
 
 require 'rails_helper'

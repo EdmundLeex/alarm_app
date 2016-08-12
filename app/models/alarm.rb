@@ -9,6 +9,8 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  turned_on  :boolean          default(FALSE), not null
+#  status     :string
+#  online_key :string
 #
 
 class Alarm < ActiveRecord::Base
@@ -17,18 +19,50 @@ class Alarm < ActiveRecord::Base
 
   ONLINE_MINUTE = 5
   VALID_DAYS = %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday].map(&:freeze).freeze
+  STATUS = {
+    snoozing: 'snooze'.freeze,
+    ringing:  'ringing'.freeze,
+    stopped:  'stopped'.freeze
+  }.freeze
 
   belongs_to :user
 
-  before_validation :normalize_days
-  validates_presence_of :alarm_time, :user_id, :turned_on
+  before_validation      :capitalize_days
+  validates_presence_of  :alarm_time, :user_id, :turned_on
+  validates_inclusion_of :status, in: STATUS.values,
+                                  allow_blank: true,
+                                  message: "status can only be #{STATUS.values}"
   validate :valid_days, :uniq_days
 
-  def self.segment(time)
-    hh = time.hour
-    mm = time.min
-    mm = mm - (mm % 5)
-    "#{hh}#{mm}"
+  def ring
+    fail "Alarm is off." unless turned_on
+    return true if ringing?
+
+    go_online
+    change_status_to(:ringing)
+  end
+
+  def ringing?
+    status == STATUS[:ringing]
+  end
+
+  def snooze
+    return true if snoozing?
+    change_status_to(:snoozing)
+  end
+
+  def snoozing?
+    status == STATUS[:snoozing]
+  end
+
+  def stop
+    return true if stopped?
+    go_offline
+    change_status_to(:stopped)
+  end
+
+  def stopped?
+    status == STATUS[:stopped]
   end
 
   def alarm_time_to_str
@@ -36,6 +70,10 @@ class Alarm < ActiveRecord::Base
   end
 
   private
+
+  def change_status_to(status)
+    update_column(:status, STATUS[status])
+  end
 
   def valid_days
     return if days.blank?
@@ -50,7 +88,7 @@ class Alarm < ActiveRecord::Base
     end
   end
 
-  def normalize_days
+  def capitalize_days
     self.days = [] if days.nil?
     days.map!(&:capitalize)
   end

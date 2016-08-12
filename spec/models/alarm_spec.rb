@@ -9,6 +9,8 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  turned_on  :boolean          default(FALSE), not null
+#  status     :string
+#  online_key :string
 #
 
 require 'rails_helper'
@@ -40,27 +42,6 @@ RSpec.describe Alarm, type: :model do
 
       subject.alarm_time = "23:99"
       expect(subject.save).to be_falsy
-    end
-  end
-
-  describe "::segment" do
-    it "returns correct segments" do
-      time = Time.strptime("12:23", "%R")
-      expect(Alarm.segment(time)).to eq "1220"
-      time = Time.strptime("12:20", "%R")
-      expect(Alarm.segment(time)).to eq "1220"
-      time = Time.strptime("12:19", "%R")
-      expect(Alarm.segment(time)).to eq "1215"
-      time = Time.strptime("12:28", "%R")
-      expect(Alarm.segment(time)).to eq "1225"
-      time = Time.strptime("01:30", "%R")
-      expect(Alarm.segment(time)).to eq "130"
-      time = Time.strptime("00:30", "%R")
-      expect(Alarm.segment(time)).to eq "030"
-      time = Time.strptime("23:59", "%R")
-      expect(Alarm.segment(time)).to eq "2355"
-      time = Time.strptime("00:00", "%R")
-      expect(Alarm.segment(time)).to eq "00"
     end
   end
 
@@ -115,4 +96,16 @@ RSpec.describe Alarm, type: :model do
       expect(time_str).to eq "15:14"
     end
   end
+
+  describe "#ring" do
+    it "goes online" do
+      expect { subject.ring }.to change { subject.online? }.from(false).to(true)
+    end
+
+    it "changes status to ringing" do
+      expect { subject.ring }.to change { subject.status }.from(nil).to('ringing')
+    end
+  end
+
+  describe "#stop"
 end
