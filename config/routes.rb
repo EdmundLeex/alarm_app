@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :alarms, only: [:create, :update, :destroy] do
     member do
       post :ring
+      post :snooze
       post :stop
     end
 
