@@ -1,3 +1,41 @@
+<script>
+  var alarms = [];
+  var baseUrl = window.location.origin;
+  
+  function setTimeoutAt(hh, mm, callback) {
+    var now = new Date();
+    var utcNow = Date.UTC(now.getUTCFullYear(),now.getUTCMonth(), now.getUTCDate() , 
+          now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
+    var millisTillTime = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hh, mm, 0, 0) - utcNow;
+    if (millisTillTime < 0) {
+      millisTillTime += 86400000;
+    }
+
+    return setTimeout(function () { 
+      callback();
+    }, millisTillTime);
+  }
+
+  function Alarm(id, timeStr) {
+    function ring() {
+      var url = baseUrl + '/alarms/' + id + '/ring';
+      $.ajax({
+        url: url,
+        method: 'post'
+      }).done(function (data) {
+        alert('ringing');
+      });
+    }
+
+    var alarmTime = new Date(timeStr);
+    var timeOut = setTimeoutAt(alarmTime.getUTCHours(), alarmTime.getUTCMinutes(), ring);
+    return {
+      id: id,
+      time: alarmTime,
+      timeOut: timeOut
+    }
+  }
+</script>
 <% current_user.alarms.each do |alarm| %>
   Time: <%= alarm.alarm_time %> <br>
   Days: <%= alarm.days %> <br>
@@ -6,6 +44,10 @@
   <button class="btn" id="ring" data-url='<%= ring_alarm_url(alarm.id) %>'>Ring</button>
   <button class="btn" id="snooze">Snooze</button>
   <button class="btn" id="stop">Stop</button>
+  
+  <script>
+    alarms.push(Alarm(<%= alarm.id %>, '<%= alarm.alarm_time %>'));
+  </script>
 <% end %>
 
 <div id="online">
@@ -43,15 +85,15 @@ $(document).ready(function () {
   var onlineUrl = '<%= onlines_alarms_url %>';
   var currentOnline = [];
 
-  setInterval(function () {
-    $.ajax({
-      url: onlineUrl
-    }).done(function (data) {
-      if (!arraysEqual(data.alarms.sort(), currentOnline.sort())) {
-        console.log(data.alarms);
-        currentOnline = data.alarms;
-      }
-    });
-  }, 100);
+  // setInterval(function () {
+  //   $.ajax({
+  //     url: onlineUrl
+  //   }).done(function (data) {
+  //     if (!arraysEqual(data.alarms.sort(), currentOnline.sort())) {
+  //       console.log(data.alarms);
+  //       currentOnline = data.alarms;
+  //     }
+  //   });
+  // }, 100);
 });
 </script>

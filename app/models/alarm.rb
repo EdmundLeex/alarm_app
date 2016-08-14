@@ -27,12 +27,15 @@ class Alarm < ActiveRecord::Base
 
   belongs_to :user
 
-  before_validation      :capitalize_days
-  validates_presence_of  :alarm_time, :user_id, :turned_on
+  validates_presence_of  :alarm_time, :user_id
+  validates_inclusion_of :turned_on, in: [true, false]
   validates_inclusion_of :status, in: STATUS.values,
                                   allow_blank: true,
                                   message: "status can only be #{STATUS.values}"
   validate :valid_days, :uniq_days
+
+  before_validation      :capitalize_days
+  before_save            :convert_time_to_utc, unless: 'alarm_time.utc?'
 
   def ring
     fail "Alarm is off." unless turned_on
@@ -91,5 +94,9 @@ class Alarm < ActiveRecord::Base
   def capitalize_days
     self.days = [] if days.nil?
     days.map!(&:capitalize)
+  end
+
+  def convert_time_to_utc
+    self.alarm_time = alarm_time.utc
   end
 end

@@ -33,7 +33,7 @@ RSpec.describe Alarm, type: :model do
       expect(subject.save).to be_truthy
     end
 
-    it "validates alarm_time format" do
+    it "validates alarm_time format", focus: true do
       subject.alarm_time = "13:23"
       expect(subject.save).to be_truthy
 
@@ -42,6 +42,14 @@ RSpec.describe Alarm, type: :model do
 
       subject.alarm_time = "23:99"
       expect(subject.save).to be_falsy
+    end
+  end
+
+  describe "::create" do
+    it 'converts time to utc' do
+      time = Time.current.in_time_zone 'Pacific Time (US & Canada)'
+      alarm = Alarm.create(alarm_time: time, user: create(:user))
+      expect(alarm.alarm_time.utc?).to be_truthy
     end
   end
 
@@ -107,5 +115,7 @@ RSpec.describe Alarm, type: :model do
     end
   end
 
-  describe "#stop"
+  describe "#stop" do
+    
+  end
 end

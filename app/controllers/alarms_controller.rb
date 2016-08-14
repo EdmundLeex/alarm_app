@@ -24,16 +24,13 @@ class AlarmsController < ApplicationController
   end
 
   def snooze
-    
+    @alarm = Alarm.find(params[:id])
+    @alarm.snooze
   end
 
   def stop
     @alarm = Alarm.find(params[:id])
-    segment = params[:segment]
-
-    if segment
-      REDIS.srem(segment, @alarm.user_id)
-    end
+    @alarm.stop
   end
 
   def create
