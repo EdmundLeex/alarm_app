@@ -11,6 +11,7 @@
 #  turned_on  :boolean          default(FALSE), not null
 #  status     :string
 #  online_key :string
+#  name       :string
 #
 
 module AlarmsHelper
