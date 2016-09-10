@@ -11,10 +11,12 @@
 #  turned_on  :boolean          default(FALSE), not null
 #  status     :string
 #  online_key :string
+#  name       :string
 #
 
 class AlarmsController < ApplicationController
-  before_action :authenticate_user!
+  skip_before_filter  :verify_authenticity_token
+  # before_action :authenticate_user!, except: :online
 
   def ring
     @alarm = Alarm.find(params[:id])
@@ -34,8 +36,12 @@ class AlarmsController < ApplicationController
   end
 
   def create
+    binding.pry
     @alarm = Alarm.new(alarm_params)
 
+    if @alarm.save
+    else
+    end
   end
 
   def destroy
@@ -50,11 +56,15 @@ class AlarmsController < ApplicationController
 
   end
 
-  def onlines
+  def online
     render json: { alarms: Alarm.online_ids }
   end
 
   private
+
+  def alarm_params
+    params.require(:alarm).permit(:alarm_time, :name)
+  end
 
   def online_users
     # remove this after test
