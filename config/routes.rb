@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     end
 
     collection do
-      get :onlines
+      get :online
     end
   end
 end
