@@ -38,6 +38,10 @@ class Alarm < ActiveRecord::Base
   before_validation      :capitalize_days
   before_save            :convert_time_to_utc, unless: 'alarm_time.utc?'
 
+  def alarm_time
+    self[:alarm_time].to_s(:time_with_zone)
+  end
+
   def ring
     fail "Alarm is off." unless turned_on
     return true if ringing?
