@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   get :test, to: 'static_pages#test'
 
-  resources :alarms, only: [:create, :update, :destroy] do
+  resources :alarms do
     member do
       post :ring
       post :snooze
