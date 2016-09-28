@@ -18,6 +18,11 @@ class AlarmsController < ApplicationController
   skip_before_filter  :verify_authenticity_token
   # before_action :authenticate_user!, except: :online
 
+  def index
+    @alarms = Alarm.all
+    render json: @alarms.to_json
+  end
+
   def ring
     @alarm = Alarm.find(params[:id])
     @alarm.ring
