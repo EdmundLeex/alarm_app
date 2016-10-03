@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161002001137) do
+ActiveRecord::Schema.define(version: 20161002165911) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,16 @@ ActiveRecord::Schema.define(version: 20161002001137) do
 
   add_index "alarms", ["user_id"], name: "index_alarms_on_user_id", using: :btree
 
+  create_table "oauth_identities", force: :cascade do |t|
+    t.string  "provider",     null: false
+    t.string  "uid",          null: false
+    t.string  "access_token"
+    t.integer "user_id"
+  end
+
+  add_index "oauth_identities", ["provider", "uid"], name: "index_oauth_identities_on_provider_and_uid", unique: true, using: :btree
+  add_index "oauth_identities", ["user_id"], name: "index_oauth_identities_on_user_id", using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
@@ -44,14 +54,13 @@ ActiveRecord::Schema.define(version: 20161002001137) do
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.string   "name"
-    t.string   "facebook_id"
-    t.string   "facebook_access_token"
+    t.string   "oauth_token"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["facebook_access_token"], name: "index_users_on_facebook_access_token", using: :btree
-  add_index "users", ["facebook_id"], name: "index_users_on_facebook_id", using: :btree
+  add_index "users", ["oauth_token"], name: "index_users_on_oauth_token", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
   add_foreign_key "alarms", "users"
+  add_foreign_key "oauth_identities", "users"
 end
