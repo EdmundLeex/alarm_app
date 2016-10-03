@@ -15,7 +15,7 @@
 #
 
 class AlarmsController < ApplicationController
-  skip_before_filter  :verify_authenticity_token
+  skip_before_filter :verify_authenticity_token
   # before_action :authenticate_user!, except: :online
 
   def index
@@ -41,8 +41,8 @@ class AlarmsController < ApplicationController
   end
 
   def create
-    binding.pry
-    @alarm = Alarm.new(alarm_params)
+    user = User.find_by_oauth_token(params[:oauth_token])
+    @alarm = user.alarms.new(alarm_params)
 
     if @alarm.save
     else
