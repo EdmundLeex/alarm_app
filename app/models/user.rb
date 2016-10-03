@@ -72,7 +72,6 @@ class User < ActiveRecord::Base
   end
 
   def reset_oauth_token!
-    binding.pry
     generate_unique_token_for(:oauth_token)
     self.save!
     self.oauth_token

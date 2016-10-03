@@ -36,7 +36,7 @@ class Alarm < ActiveRecord::Base
   validate :valid_days, :uniq_days
 
   before_validation      :capitalize_days
-  before_save            :convert_time_to_utc, unless: 'alarm_time.utc?'
+  before_save            :convert_time_to_utc, unless: 'read_attribute(:alarm_time).utc?'
 
   def alarm_time
     self[:alarm_time].to_s(:time_with_zone)
